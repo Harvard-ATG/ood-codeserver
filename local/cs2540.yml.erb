@@ -1,0 +1,64 @@
+# Custom setup for COMPSCI 2540. Allows users to set a number of CPU cores up to
+# the total number of cores available on our general purpose compute nodes,
+# currently 36.
+
+# Included in initial template
+<%-
+  groups = OodSupport::User.new.groups.sort_by(&:id).tap { |groups|
+    groups.unshift(groups.delete(OodSupport::Process.group))
+  }.map(&:name).grep(/^P./)
+-%>
+# Added to control group access to apps
+<%-
+def arrays_have_common_element(array1, array2)
+  # Use the `&` operator to get the intersection of the two arrays
+  # If the intersection is not empty, return true, otherwise false
+  !(array1 & array2).empty?
+end
+
+userGroups = OodSupport::User.new.groups.sort_by(&:id).map(&:name)
+# First check if the user is in an admin group
+adminGroups = [
+  "ondemand-admins-1025174" # HUIT OOD admin group, prod environment
+]
+if arrays_have_common_element(userGroups, adminGroups)
+  cluster="*"
+else
+  # If the user is not in an admin group, check if they're in an authorized Canvas group
+  userCanvasGroups = userGroups.flat_map{ |str| str.scan(/^canvas(\d+)-\d+/) }.flatten
+  enabledGroups = [
+    # Cannot have other enabled groups if a course installation is in use
+    # This is because the course installation uses the course shared folder,
+    # which is not accessible to users outside of that course.
+    "144301" # COMPSCI 2540: Formal Methods for Computer Security
+  ]
+
+  # Check if the groups that the user is in match any of the courses that should
+  # have access to this app.
+
+  if arrays_have_common_element(userGroups, enabledGroups)
+    cluster="*"
+  else
+    cluster="disable_this_app"
+  end
+end
+-%>
+---
+title: Code Server (COMPSCI 2540)
+cluster: "<%= cluster %>"
+cacheable: false
+form:
+  - bc_num_hours
+  - bc_num_slots
+  - version
+  - custom_num_cores
+attributes:
+  version: "4.12.0"
+  bc_num_slots: null
+  custom_num_cores:
+    widget: "number_field"
+    label: "Number of CPUs"
+    value: 1
+    min: 1
+    max: 36
+    step: 1
