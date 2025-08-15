@@ -5,7 +5,7 @@
 spack:
   # add package specs to the `specs` list
   specs:
-  - code-server@4.12.0
+  - code-server@4.96.4
   view: true
   concretizer:
     unify: true
