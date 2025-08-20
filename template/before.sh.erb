@@ -1,3 +1,17 @@
+#!/usr/bin/bash -l
+
+this_script="template/before.sh.erb"
+
+log() {
+    echo -e "[$(date -Iseconds)][${this_script}] $1"
+}
+
+# Validate home directory and set it to what it should be
+log "original HOME=$HOME"
+log "user=$(id -nu)"
+export HOME="/shared/home/$(id -nu)"
+log "new HOME=$HOME"
+
 # Export the module function if it exists
 [[ $(type -t module) == "function" ]] && export -f module
 
@@ -9,5 +23,3 @@ export host="${host}"
 
 # Generate SHA1 encrypted password (requires OpenSSL installed)
 export password="$(create_passwd 16)"
-
-export code_server_version="<%= context.version %>"

@@ -1,23 +1,10 @@
 #!/usr/bin/bash -l
 
-# Validate home directory and set it to what it should be
-echo "original HOME=$HOME"
-echo "user=$(id -nu)"
-export HOME="/shared/home/$(id -nu)"
-echo "new HOME=$HOME"
+this_script="template/script.sh.erb"
 
-# Validate shell and set it to what it should be
-echo "original SHELL=$SHELL"
-export SHELL="/bin/bash"
-echo "new SHELL=$SHELL"
-
-<%
-
-code_server_version = context.version
-
-# Ensure that code-server always starts up in the home directory.
-working_dir = Pathname.new(ENV['HOME'])
-%>
+log() {
+    echo -e "[$(date -Iseconds)][${this_script}] $1"
+}
 
 CODE_SERVER_DATAROOT="$HOME/.local/share/code-server"
 mkdir -p "$CODE_SERVER_DATAROOT/extensions"
@@ -26,22 +13,19 @@ mkdir -p "$CODE_SERVER_DATAROOT/extensions"
 export PASSWORD="$password"
 
 # Print compute node.
-echo "TIMING: $(date -Iseconds) - Running on compute node ${SLURMD_NODENAME}:$port"
-
-# VSCode complains that system git is too old.
-# module load project/ondemand git app_code_server/<%= code_server_version %>
+log "Running on compute node ${SLURMD_NODENAME}:$port"
 
 # Activate the shared spack environment
 . /shared/spack/share/spack/setup-env.sh
-echo "TIMING: $(date -Iseconds) - Loaded spack"
+log "Loaded spack"
 which spack
 
 # Use spack to load code-server
 spack unload --all
 spack env activate codeserver
-echo "TIMING: $(date -Iseconds) - Activated spack environment"
+log "Activated spack environment"
 
-CPP_FILE="<%= working_dir.to_s %>/.vscode/c_cpp_properties.json"
+CPP_FILE="$HOME/.vscode/c_cpp_properties.json"
 
 if [[ -f "$CPP_FILE" ]]; then
     CPP_DIR="${TMPDIR:=/tmp/$USER}/cpp-vscode"
@@ -61,8 +45,7 @@ if [[ -f "$CPP_FILE" ]]; then
 #
 # Start Code Server.
 #
-echo "TIMING: $(date -Iseconds) - Starting code-server"
-echo ""
+log "Starting code-server"
 
 code-server \
     --auth="password" \
@@ -72,4 +55,4 @@ code-server \
     --user-data-dir="$CODE_SERVER_DATAROOT" \
     --log debug \
     # --verbose \
-    "<%= working_dir.to_s %>"
+    "$HOME"
