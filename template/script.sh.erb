@@ -16,14 +16,14 @@ export PASSWORD="$password"
 log "Running on compute node ${SLURMD_NODENAME}:$port"
 
 # Activate the shared spack environment
-SPACK_INSTALL_ROOT=<%= context.custom_spack_install.blank? ? "/shared/spack" : context.custom_spack_install.to_s %>
+SPACK_INSTALL_ROOT=<%= context.respond_to?('custom_spack_install') ? context.custom_spack_intstall.to_s : "/shared/spack" %>
 . ${SPACK_INSTALL_ROOT}/share/spack/setup-env.sh
 log "Loaded spack"
 which spack
 
 # Use spack to load code-server
 spack unload --all
-SPACK_ENVIRONMENT=<%= context.custom_spack_environment.blank? ? "codeserver" : context.custom_spack_environment.to_s %>
+SPACK_ENVIRONMENT=<%= context.respond_to?('custom_spack_environment') ? context.custom_spack_environment.to_s : "codeserver" %>
 spack env activate $SPACK_ENVIRONMENT
 log "Activated spack environment: $SPACK_ENVIRONMENT"
 
