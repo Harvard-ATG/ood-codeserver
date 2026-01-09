@@ -16,14 +16,16 @@ export PASSWORD="$password"
 log "Running on compute node ${SLURMD_NODENAME}:$port"
 
 # Activate the shared spack environment
-. /shared/spack/share/spack/setup-env.sh
+SPACK_INSTALL_ROOT=<%= custom_spack_install.blank? ? "/shared/spack" : custom_spack_install.to_s %>
+. ${SPACK_INSTALL_ROOT}/share/spack/setup-env.sh
 log "Loaded spack"
 which spack
 
 # Use spack to load code-server
 spack unload --all
-spack env activate codeserver
-log "Activated spack environment"
+SPACK_ENVIRONMENT=<%= custom_spack_environment.blank? ? "codeserver" : custom_spack_environment.to_s %>
+spack env activate $SPACK_ENVIRONMENT
+log "Activated spack environment: $SPACK_ENVIRONMENT"
 
 CPP_FILE="$HOME/.vscode/c_cpp_properties.json"
 
