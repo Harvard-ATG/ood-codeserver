@@ -16,7 +16,7 @@ export PASSWORD="$password"
 log "Running on compute node ${SLURMD_NODENAME}:$port"
 
 # Activate the shared spack environment
-SPACK_INSTALL_ROOT=<%= context.respond_to?('custom_spack_install') ? context.custom_spack_intstall.to_s : "/shared/spack" %>
+SPACK_INSTALL_ROOT=<%= context.respond_to?('custom_spack_install') ? context.custom_spack_install.to_s : "/shared/spack" %>
 . ${SPACK_INSTALL_ROOT}/share/spack/setup-env.sh
 log "Loaded spack"
 which spack
