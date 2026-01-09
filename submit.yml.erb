@@ -1,7 +1,22 @@
 ---
+
+<%-
+if custom_num_gpus.blank?
+  gpuArg = ""
+  cpuArg = "--cpus-per-gpu=12"
+  memArg = "--mem-per-gpu=48"
+else
+  gpuArg = "- \"--gpus-per-node=#{custom_num_gpus.to_i}\""
+  cpuArg = "- \"--cpus-per-task=#{custom_num_cores.blank? ? 1 : custom_num_cores.to_i}\""
+  memArg = "- \"--mem-per-cpu=4\""
+end
+-%>
+
 batch_connect:
   template: "basic"
 script:
   native:
     - "--nodes=1"
-    - "--cpus-per-task=<%= custom_num_cores.blank? ? 1 : custom_num_cores.to_i %>"
+    <%= gpuArg.to_s %>
+    <%= cpuArg.to_s %>
+    <%= memArg.to_s %>
