@@ -75,16 +75,10 @@ attributes:
   # app is configured for a specific EC2 instance type, like an instance type 
   # with GPU resources.
   bc_queue: "gpu"
-  custom_num_cores:
-    widget: "number_field"
-    label: "Number of CPUs"
-    value: 1
-    min: 1
-    max: 48
-    step: 1
   custom_num_gpus:
     widget: "number_field"
     label: "Number of GPUs"
+    help: "Each GPU allocated also allocates 12 CPU cores and 48GB of memory"
     value: 1
     min: 1
     max: 4
