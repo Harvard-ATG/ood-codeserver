@@ -4,7 +4,7 @@
 if custom_num_gpus.blank?
   gpuArg = ""
   cpuArg = "- \"--cpus-per-task=#{custom_num_cores.blank? ? 1 : custom_num_cores.to_i}\""
-  memArg = "- \"--mem-per-cpu=4\""
+  memArg = "- \"--mem-per-cpu=2\""
 else
   gpuArg = "- \"--gpus-per-node=#{custom_num_gpus.to_i}\""
   cpuArg = "- \"--cpus-per-gpu=12\""
