@@ -57,6 +57,8 @@ form:
   - bc_num_hours
   - bc_queue
   - custom_num_cores
+  - custom_spack_install
+  - custom_spack_environment
 
 # Customize how form variables appear to users. This is also where you can set 
 # a static value for a variable, in which case it will not be visible to users.
@@ -66,17 +68,13 @@ attributes:
   bc_num_hours:
     value: 2
     min: 1
-    max: 6  # 6 hours max
+    max: 2  # 2 hours max
     step: 1
 
   # Which queue to submit to. Usually `general` is the best choice, unless this 
   # app is configured for a specific EC2 instance type, like an instance type 
   # with GPU resources.
-  bc_queue: "general"
-  custom_num_cores:
-    widget: "number_field"
-    label: "Number of CPUs"
-    value: 1
-    min: 1
-    max: 4
-    step: 1
+  bc_queue: "metal"
+  custom_num_cores: 96
+  custom_spack_install: "/shared/courseSharedFolders/162593outer/162593/spack"
+  custom_spack_environment: "cs1411"
