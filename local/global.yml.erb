@@ -1,0 +1,44 @@
+# Code Server app user-facing configuration form file (generic sub-app)
+# This config file is both an actual configuration file for an actual sample 
+# application, and a starting point for configuring a new sub-app. To make a 
+# custom application launch for a course, make a copy of this file in the same
+# folder and customize the form config to your liking. There are notes along
+# the way to help you understand what options you can make configurable to users.
+# See the docs page from Open OnDemand for more details:
+# https://osc.github.io/ood-documentation/develop/how-tos/app-development/interactive/form.html
+---
+title: Code Server - Universal
+description: This Code Server app has been configured for general use. If your course has a custom version of Code Server available, you should use that one instead.
+cluster: "*"
+cacheable: false
+
+# Form attributes that will be presented to the user and available to the 
+# scripts that launch the app. Think of this as initializing variables for use 
+# in the attributes section as needed.
+form:
+  - bc_num_hours
+  - bc_queue
+  - custom_num_cores
+
+# Customize how form variables appear to users. This is also where you can set 
+# a static value for a variable, in which case it will not be visible to users.
+attributes:
+  # How long will the job run for? Configure min, max, and step to set limits 
+  # on how long app sessions can run.
+  bc_num_hours:
+    value: 2
+    min: 1
+    max: 6  # 6 hours max
+    step: 1
+
+  # Which queue to submit to. Usually `general` is the best choice, unless this 
+  # app is configured for a specific EC2 instance type, like an instance type 
+  # with GPU resources.
+  bc_queue: "general"
+  custom_num_cores:
+    widget: "number_field"
+    label: "Number of CPUs"
+    value: 1
+    min: 1
+    max: 4
+    step: 1
