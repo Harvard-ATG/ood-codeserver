@@ -4,11 +4,16 @@
 if custom_num_gpus.blank?
   gpuArg = ""
   cpuArg = "- \"--cpus-per-task=#{custom_num_cores.blank? ? 1 : custom_num_cores.to_i}\""
-  memArg = "- \"--mem-per-cpu=2\""
+  # 93388M and 48 CPU reported by sinfo -p general --format="%c|%m"
+  # So an even distribution is 1945M per CPU
+  memArg = "- \"--mem-per-cpu=1945M\""
 else
   gpuArg = "- \"--gpus-per-node=#{custom_num_gpus.to_i}\""
+  # 186777M, 48 CPU, and 4 GPU reported by sinfo -p gpu --format="%c|%m|%G"
+  # So each job gets 12 CPU per GPU
   cpuArg = "- \"--cpus-per-gpu=12\""
-  memArg = "- \"--mem-per-gpu=48\""
+  # And an even split on the available memory
+  memArg = "- \"--mem-per-gpu=46694M\""
 end
 -%>
 
